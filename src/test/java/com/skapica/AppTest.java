@@ -1,38 +1,61 @@
 package com.skapica;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class AppTest {
+
+    private TestLogHandler handler;
+
     /**
-     * Create the test case
-     *
-     * @param testName name of the test case
+     * overrides default application logger to capture and test output
      */
-    public AppTest( String testName )
-    {
-        super( testName );
+    @Before
+    public void initLogger() {
+        handler = new TestLogHandler();
+        handler.setLevel(Level.ALL);
+        Logger logger = Logger.getLogger("testLogger");
+        logger.setUseParentHandlers(false);
+        logger.addHandler(handler);
+        logger.setLevel(Level.ALL);
+        App.setLog(logger);
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
+    @Test
+    public void shouldPrintNoItemsWarningMessageWhenCommandLineArgumentListIsNull() {
+        runAppWithEmptyArgs(null);
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    @Test
+    public void shouldPrintNoItemsWarningMessageWhenCommandLineArgumentListIsEmpty() {
+        runAppWithEmptyArgs(new String[]{});
+    }
+
+    @Test
+    public void shouldPrintErrorMessageForInvalidProduct() {
+        String productsAsString = "Small Coffee, Invalid Product";
+        App.main(productsAsString.split(" "));
+        assertEquals(Level.SEVERE, handler.getLevel());
+        assertTrue(handler.getLastMessage().startsWith("Order cannot be processed. Reason: "));
+    }
+
+    @Test
+    public void shouldPrintSuccessMessageForValidProducts() {
+        String productsAsString = "Small Coffee, Bacon Roll";
+        App.main(productsAsString.split(" "));
+        assertEquals(Level.FINE, handler.getLevel());
+        assertEquals("Successfully processed order", handler.getLastMessage());
+    }
+
+    private void runAppWithEmptyArgs(String[] args) {
+        App.main(args);
+        assertEquals(Level.WARNING, handler.getLevel());
+        assertEquals("Order cannot be processed. Provide at least one product name to make an order.", handler.getLastMessage());
     }
 }
