@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     public static final String PRODUCTS_SOURCE = "products.csv";
     public static final String PRODUCTS_JOIN_STRING = "with";
+    public static final String BONUS_PREFIX = "bonus";
     private static final Logger log = Logger.getLogger(ProductService.class.getName());
 
     public static List<Product> loadAllProducts(String fileName) {
@@ -27,7 +28,11 @@ public class ProductService {
     }
 
     private static Product findProduct(String productName, boolean findPrimary) {
-        productName = productName.trim();
+        boolean isBonusProduct = false;
+        if (productName.trim().startsWith(BONUS_PREFIX)){
+            productName = productName.replace(BONUS_PREFIX,"");
+            isBonusProduct = true;
+        }
         Product product;
         if (productName.contains(PRODUCTS_JOIN_STRING)){
             // handle product with extra
@@ -43,13 +48,17 @@ public class ProductService {
             // handle simple product
             String finalProductName = productName;
             List<Product> matchingProducts = loadAllProducts(PRODUCTS_SOURCE).stream()
-                    .filter(p -> p.getName().toLowerCase().contains(finalProductName.toLowerCase())).toList();
+                    .filter(p -> p.getName().toLowerCase().contains(finalProductName.trim().toLowerCase())).toList();
 
             validateIfProductExistsAndIsUnique(productName, matchingProducts);
 
             product = matchingProducts.get(0);
 
             validateIfProductCanBeSold(findPrimary, product);
+        }
+        if (isBonusProduct){
+            validateIfProductIsEligibleForBonus(product);
+            product.setBonusProduct(true);
         }
         return product;
     }
@@ -123,5 +132,15 @@ public class ProductService {
             throw new IllegalArgumentException("Extras cannot be ordered separately: invalid product: " + product.getName());
         if (!ProductType.EXTRA.equals(product.getType()) && !findPrimary)
             throw new IllegalArgumentException("Main product cannot be ordered as addition: invalid extra: " + product.getName());
+    }
+
+    /**
+     * Validates if product is eligible for bonus
+     * @param product - product to validate
+     * @throws IllegalArgumentException when product is not eligible for bonus
+     */
+    private static void validateIfProductIsEligibleForBonus(Product product) {
+        if (!ProductType.DRINK.equals(product.getType()))
+            throw new IllegalArgumentException("Only beverage can be collected for free: invalid product: " + product.getName());
     }
 }

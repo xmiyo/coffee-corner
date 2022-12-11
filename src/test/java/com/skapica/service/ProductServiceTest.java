@@ -111,4 +111,22 @@ public class ProductServiceTest {
         Product withExtra = ProductService.findProduct("medium coffee with extra milk");
         assertEquals(-1, base.getPrice().compareTo(withExtra.getPrice()));
     }
+
+    @Test
+    public void priceOfBonusDrinkShouldBeEqualZero() {
+        Product product = ProductService.findProduct("bonus large coffee");
+        assertEquals(0, product.getPrice().compareTo(BigDecimal.ZERO));
+    }
+
+    @Test
+    public void priceOfBonusDrinkWithExtraShouldBeEqualZero() {
+        Product product = ProductService.findProduct("bonus large coffee with foamed milk");
+        assertEquals(0, product.getPrice().compareTo(BigDecimal.ZERO));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingBonusProductNotEligibleForBonus() {
+        Product product = ProductService.findProduct("bonus bacon roll");
+        assertEquals(0, product.getPrice().compareTo(BigDecimal.ZERO));
+    }
 }

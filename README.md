@@ -43,6 +43,15 @@ java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, la
 * Product name and price gets updated when extra ingredient is added
 * Shorter name can be used to identify product but must be unique. Otherwise, corresponding error will be printed to console
 
+### Bonus program
+
+1. Any beverage can be collected for free when product name is prefixed with 'bonus' string
+```
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, bonus large coffee with special roast, bacon roll  
+```
+
+
+
 
 
 
