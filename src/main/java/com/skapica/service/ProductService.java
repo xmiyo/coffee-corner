@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ProductService {
     public static final String PRODUCTS_SOURCE = "products.csv";
+    public static final String PRODUCTS_JOIN_STRING = "with";
     private static final Logger log = Logger.getLogger(ProductService.class.getName());
 
     public static List<Product> loadAllProducts(String fileName) {
@@ -24,11 +23,36 @@ public class ProductService {
     }
 
     public static Product findProduct(String productName) {
-        return loadAllProducts(PRODUCTS_SOURCE).stream()
-                .filter(product -> product.getName().equalsIgnoreCase(productName))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("No product found: " + productName));
+        return findProduct(productName, true);
     }
 
+    private static Product findProduct(String productName, boolean findPrimary) {
+        productName = productName.trim();
+        Product product;
+        if (productName.contains(PRODUCTS_JOIN_STRING)){
+            // handle product with extra
+            String[] items = productName.split(PRODUCTS_JOIN_STRING);
+            product = findProduct(items[0], true);
+
+            validateIfExtrasCanBeAdded(product);
+
+            Product extra = findProduct(items[1], false);
+            product.setExtra(extra);
+
+        } else {
+            // handle simple product
+            String finalProductName = productName;
+            List<Product> matchingProducts = loadAllProducts(PRODUCTS_SOURCE).stream()
+                    .filter(p -> p.getName().toLowerCase().contains(finalProductName.toLowerCase())).toList();
+
+            validateIfProductExistsAndIsUnique(productName, matchingProducts);
+
+            product = matchingProducts.get(0);
+
+            validateIfProductCanBeSold(findPrimary, product);
+        }
+        return product;
+    }
 
     private static List<Product> loadAllProductsFromFile(String fileName) {
         List<Product> products = new ArrayList<>();
@@ -58,5 +82,46 @@ public class ProductService {
             return Collections.emptyList();
         }
         return products;
+    }
+
+    /**
+     * Validates if extra ingredient can be added to product
+     * @param product product to validate
+     * @throws IllegalArgumentException when adding extras to product is not allowed
+     */
+    private static void validateIfExtrasCanBeAdded(Product product) {
+        if (!product.getName().toLowerCase().contains("coffee")){
+            throw new IllegalArgumentException("Extras can be ordered only with coffee");
+        }
+    }
+
+    /**
+     * Validates if product for given name exists and if is unique
+     * @param productName name of product to validate
+     * @param matchingProducts list of {@link Product} to verify
+     * @throws IllegalArgumentException when no product found or collection contains more than one item
+     *
+     */
+    private static void validateIfProductExistsAndIsUnique(String productName, List<Product> matchingProducts) {
+        if (matchingProducts.isEmpty())
+            throw new IllegalArgumentException("No product found: " + productName);
+        else if (matchingProducts.size() > 1)
+            throw new IllegalArgumentException("Product name ambiguous. Specify your order. Found: " + matchingProducts.stream().map(Product::getName).collect(Collectors.joining(", ")));
+    }
+
+    /**
+     * Validates if product can be sold.
+     * Extra products cannot be sold separately.
+     * Main products cannot be addition to another main product.
+     *
+     * @param findPrimary - determines if expected product type is primary product
+     * @param product product to check
+     * @throws IllegalArgumentException when validation fails.
+     */
+    private static void validateIfProductCanBeSold(boolean findPrimary, Product product) {
+        if (ProductType.EXTRA.equals(product.getType()) && findPrimary)
+            throw new IllegalArgumentException("Extras cannot be ordered separately: invalid product: " + product.getName());
+        if (!ProductType.EXTRA.equals(product.getType()) && !findPrimary)
+            throw new IllegalArgumentException("Main product cannot be ordered as addition: invalid extra: " + product.getName());
     }
 }

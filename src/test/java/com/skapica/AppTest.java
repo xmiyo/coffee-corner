@@ -47,7 +47,7 @@ public class AppTest {
 
     @Test
     public void shouldPrintSuccessMessageForValidProducts() {
-        String productsAsString = "Small Coffee, Bacon Roll";
+        String productsAsString = "Small Coffee, Bacon Roll, medium coffee with extra milk, orange juice";
         App.main(productsAsString.split(" "));
         assertEquals(Level.FINE, handler.getLevel());
         assertEquals("Successfully processed order", handler.getLastMessage());

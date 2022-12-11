@@ -74,4 +74,41 @@ public class ProductServiceTest {
     public void findProductShouldThrowIllegalArgumentExceptionWhenProductNotFound() {
         ProductService.findProduct("unknown product");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingExtraWithoutMainProduct() {
+        ProductService.findProduct("Extra milk");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingMainProductAsExtra() {
+        ProductService.findProduct("Small coffee with large coffee");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingAmbiguousMainProduct() {
+        ProductService.findProduct("coffee");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingAmbiguousExtraProduct() {
+        ProductService.findProduct("small coffee with milk");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findProductShouldThrowIllegalArgumentExceptionWhenOrderingExtraToProductDifferentThanCoffee() {
+        ProductService.findProduct("orange juice with extra milk");
+    }
+
+    @Test
+    public void shouldFindCoffeeProductWithExtra() {
+        ProductService.findProduct("medium coffee with extra milk");
+    }
+
+    @Test
+    public void priceOfProductWithExtraShouldBeHigherThanBaseProductPrice() {
+        Product base = ProductService.findProduct("medium coffee");
+        Product withExtra = ProductService.findProduct("medium coffee with extra milk");
+        assertEquals(-1, base.getPrice().compareTo(withExtra.getPrice()));
+    }
 }
