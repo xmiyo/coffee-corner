@@ -62,7 +62,7 @@ java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, ba
 ```
 java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee  
 ```
-4. When ordering drinks, drinks not used for bonus are exchanged to bonus points. Bonus points can be exchanged to free dring (see first rule of bonus program)
+4. When ordering drinks, drinks not used for bonus are exchanged to bonus points. Bonus points can be exchanged to free drink (see first rule of bonus program)
 ```
 java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee, orange juice, small coffee
 ```

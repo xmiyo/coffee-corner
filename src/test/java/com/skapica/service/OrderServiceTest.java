@@ -153,7 +153,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void pirceOfBonusDringShouldBeZeroWhenApplyinFreeDrinkBonus() {
+    public void priceOfBonusDrinkShouldBeZeroWhenApplyingFreeDrinkBonus() {
         String productList = "small coffee, small coffee, small coffee, small coffee, small coffee with foamed milk";
         Order order = OrderService.createOrderFromCommandLineArguments(productList.split(" "));
         assertNotNull(order);
