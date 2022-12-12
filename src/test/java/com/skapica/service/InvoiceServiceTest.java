@@ -107,7 +107,7 @@ public class InvoiceServiceTest {
     }
 
     private static String getSeparatorPattern() {
-        return "^-{65}\r?$";
+        return "^-{85}\r?$";
     }
 
     private Order createOrder(){

@@ -62,7 +62,7 @@ public class OrderService {
         Optional<Product> snack = getNextSnack(order, processedSnacks);
 
         while (drink.isPresent() && snack.isPresent()){
-            drink.get().getExtra().setBonusProduct(true);
+            drink.get().getExtras().get(0).setBonusProduct(true);
 
             processedDrinks.add(drink.get());
             processedSnacks.add(snack.get());
@@ -80,7 +80,7 @@ public class OrderService {
 
     private static Optional<Product> getNextDrinkWithExtraIngredient(Order order, List<Product> processedDrinks) {
         return filterByTypeIgnoringProducts(order, ProductType.DRINK, processedDrinks)
-                .filter(product -> product.getExtra() != null)
+                .filter(product -> product.getExtras() != null)
                 .findFirst();
     }
 

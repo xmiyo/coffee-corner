@@ -9,15 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class ProductService {
     public static final String PRODUCTS_SOURCE = "products.csv";
     public static final String PRODUCTS_JOIN_STRING = "with";
+    public static final String EXTRAS_JOIN_STRING = "and";
     public static final String BONUS_PREFIX = "bonus";
     private static final Logger log = Logger.getLogger(ProductService.class.getName());
 
@@ -31,21 +29,29 @@ public class ProductService {
 
     private static Product findProduct(String productName, boolean findPrimary) {
         boolean isBonusProduct = false;
-        if (productName.trim().startsWith(BONUS_PREFIX)){
-            productName = productName.replace(BONUS_PREFIX,"");
+        if (productName.trim().startsWith(BONUS_PREFIX)) {
+            productName = productName.replace(BONUS_PREFIX, "");
             isBonusProduct = true;
         }
         Product product;
-        if (productName.contains(PRODUCTS_JOIN_STRING)){
+        if (productName.contains(PRODUCTS_JOIN_STRING)) {
             // handle product with extra
             String[] items = productName.split(PRODUCTS_JOIN_STRING);
             product = findProduct(items[0], true);
-
             ProductValidator.validateIfExtrasCanBeAdded(product);
-
-            Product extra = findProduct(items[1], false);
-            product.setExtra(extra);
-
+            if (items[1].contains(EXTRAS_JOIN_STRING)) {
+                //handle multiple extras
+                String[] extras = items[1].split(EXTRAS_JOIN_STRING);
+                ProductValidator.validateExtrasSize(extras);
+                Arrays.stream(extras).forEach(extraItem -> {
+                    Product extra = findProduct(extraItem, false);
+                    product.addExtra(extra);
+                });
+            } else {
+                //handle single extra
+                Product extra = findProduct(items[1], false);
+                product.addExtra(extra);
+            }
         } else {
             // handle simple product
             String finalProductName = productName;
@@ -58,7 +64,7 @@ public class ProductService {
 
             ProductValidator.validateIfProductCanBeSold(findPrimary, product);
         }
-        if (isBonusProduct){
+        if (isBonusProduct) {
             ProductValidator.validateIfProductIsEligibleForBonus(product);
             product.setBonusProduct(true);
         }
@@ -69,7 +75,7 @@ public class ProductService {
         List<Product> products = new ArrayList<>();
         try (InputStream in = App.class.getResourceAsStream("/" + fileName);
              BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in)))) {
-            for(String line; (line = reader.readLine()) != null; ) {
+            for (String line; (line = reader.readLine()) != null; ) {
                 String[] properties = line.split(",");
                 if (properties.length != 3) {
                     String message = "Incorrect product definition: " + line;

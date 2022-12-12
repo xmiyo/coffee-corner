@@ -3,6 +3,7 @@ package com.skapica.service;
 import com.skapica.model.Product;
 import com.skapica.model.ProductType;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +58,10 @@ public class ProductValidator {
     public static void validateIfProductIsEligibleForBonus(Product product) {
         if (!ProductType.DRINK.equals(product.getType()))
             throw new IllegalArgumentException("Only beverage can be collected for free: invalid product: " + product.getName());
+    }
+
+    public static void validateExtrasSize(String[] extras) {
+        if (extras != null && extras.length > 2)
+            throw new IllegalArgumentException("Product can only contain two extras. Found: " + Arrays.stream(extras).map(String::trim).collect(Collectors.joining(", ")));
     }
 }

@@ -95,4 +95,21 @@ public class ProductValidatorTest {
         Product product = new Product(null, ProductType.EXTRA, null);
         ProductValidator.validateIfProductIsEligibleForBonus(product);
     }
+
+    @Test
+    public void validateExtrasSizeShouldDoNothingForNullArray() {
+        ProductValidator.validateExtrasSize(null);
+    }
+
+    @Test
+    public void validateExtrasSizeShouldDoNothingForArrayWithAtMostTwoItems() {
+        ProductValidator.validateExtrasSize(new String[]{});
+        ProductValidator.validateExtrasSize(new String[]{"1"});
+        ProductValidator.validateExtrasSize(new String[]{"1", "2"});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExtrasSizeShouldThrowIllegalArgumentExceptionForArrayWithMoreThanTwoItems() {
+        ProductValidator.validateExtrasSize(new String[]{"1", "2", "3"});
+    }
 }

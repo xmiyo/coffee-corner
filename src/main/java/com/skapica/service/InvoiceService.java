@@ -23,16 +23,16 @@ public class InvoiceService {
             String dateFormat = "dd/MM/yyyy HH:mm";
 
             //print header
-            System.out.println("\n-----------------------------------------------------------------");
-            System.out.println(addPadding("Charlene's Coffee Corner", 45));
-            System.out.println("-----------------------------------------------------------------");
+            System.out.println("\n-------------------------------------------------------------------------------------");
+            System.out.println(addPadding("Charlene's Coffee Corner", 55));
+            System.out.println("-------------------------------------------------------------------------------------");
             System.out.println("Purchase date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern(dateFormat)));
             System.out.println("Invoice number: " + getInvoiceNumber());
-            System.out.println("-----------------------------------------------------------------");
+            System.out.println("-------------------------------------------------------------------------------------");
 
             //print purchase items
             String invoiceEntryFormat = "%s %s CHF";
-            int itemNamePadding = -50;
+            int itemNamePadding = -70;
             int itemPricePadding = 10;
             order.getProducts().forEach(product -> System.out.printf((invoiceEntryFormat) + "%n",
                     addPadding(product.getName(), itemNamePadding),
@@ -42,7 +42,7 @@ public class InvoiceService {
             System.out.printf((invoiceEntryFormat) + "%n",
                     addPadding("Total:", itemNamePadding),
                     addPadding(priceFormat.format(total), itemPricePadding));
-            System.out.println("-----------------------------------------------------------------");
+            System.out.println("-------------------------------------------------------------------------------------");
 
             //print bonus points
             Integer bonusPoints = order.getBonusPoints();

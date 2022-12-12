@@ -101,6 +101,27 @@ public class ProductServiceTest {
     }
 
     @Test
+    public void shouldFindProductWithoutExtra() {
+        Product product = ProductService.findProduct("small coffee");
+        assertNotNull(product);
+        assertNull(product.getExtras());
+    }
+
+    @Test
+    public void shouldFindProductWithOneExtra() {
+        Product product = ProductService.findProduct("small coffee with extra milk");
+        assertNotNull(product);
+        assertEquals(1, product.getExtras().size());
+    }
+
+    @Test
+    public void shouldFindProductWithTwoExtras() {
+        Product product = ProductService.findProduct("small coffee with extra milk and special roast");
+        assertNotNull(product);
+        assertEquals(2, product.getExtras().size());
+    }
+
+    @Test
     public void shouldFindCoffeeProductWithExtra() {
         ProductService.findProduct("medium coffee with extra milk");
     }

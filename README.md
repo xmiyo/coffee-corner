@@ -31,6 +31,11 @@ Coffee (only) can be ordered with extra ingredient:
 java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, large coffee with special roast, bacon roll  
 ```
 
+Coffee (only) can be ordered with max 2 extra ingredients:
+```
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk and special roast  
+```
+
 ### Available products
 * Program accepts product names defined in `src/main/resources/products.csv` file.
 * Whenever product list is changed, and you run project from command line, rebuild project to refresh product list.
@@ -57,7 +62,7 @@ java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, ba
 ```
 java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee  
 ```
-4. When ordering drinks, drinks not used for bonus are exchanged to bonus points
+4. When ordering drinks, drinks not used for bonus are exchanged to bonus points. Bonus points can be exchanged to free dring (see first rule of bonus program)
 ```
 java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee, orange juice, small coffee
 ```

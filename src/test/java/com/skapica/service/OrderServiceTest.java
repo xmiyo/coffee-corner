@@ -52,7 +52,10 @@ public class OrderServiceTest {
         assertEquals(2, order.getProducts().size());
         Product drink = order.getProducts().stream().filter(product -> product.getType().equals(ProductType.DRINK)).findFirst().orElse(null);
         assertNotNull(drink);
-        assertEquals(BigDecimal.ZERO, drink.getExtra().getPrice());
+        List<Product> extras = drink.getExtras();
+        Product freeItem = extras.stream().filter(Product::isBonusProduct).findFirst().orElse(null);
+        assertNotNull(freeItem);
+        assertEquals(BigDecimal.ZERO, freeItem.getPrice());
     }
 
     @Test
@@ -63,7 +66,10 @@ public class OrderServiceTest {
         assertEquals(2, order.getProducts().size());
         Product drink = order.getProducts().stream().filter(product -> product.getType().equals(ProductType.DRINK)).findFirst().orElse(null);
         assertNotNull(drink);
-        assertEquals(BigDecimal.ZERO, drink.getExtra().getPrice());
+        List<Product> extras = drink.getExtras();
+        Product freeItem = extras.stream().filter(Product::isBonusProduct).findFirst().orElse(null);
+        assertNotNull(freeItem);
+        assertEquals(BigDecimal.ZERO, freeItem.getPrice());
         assertEquals(1, drink.getPrice().compareTo(BigDecimal.ZERO));
     }
 
@@ -75,7 +81,7 @@ public class OrderServiceTest {
         assertEquals(4, order.getProducts().size());
         List<Product> drinks = order.getProducts().stream()
                 .filter(product -> product.getType().equals(ProductType.DRINK))
-                .filter(product -> product.getExtra().getPrice().equals(BigDecimal.ZERO)).toList();
+                .filter(product -> product.getExtras() != null && product.getExtras().stream().filter(Product::isBonusProduct).findFirst().orElse(null) != null).toList();
         assertEquals(2, drinks.size());
     }
 
