@@ -12,8 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class InvoiceServiceTest {
@@ -72,6 +74,36 @@ public class InvoiceServiceTest {
         assertTrue(lines[10].startsWith("Total: "));
         assertTrue(lines[10].contains(total.toString()));
         assertTrue(lines[11].matches(getSeparatorPattern()));
+    }
+
+    @Test
+    public void shouldPrintBonusPointsWhenBonusPointsGreaterThanZero() {
+        Order order = createOrder();
+        order.setBonusPoints(2);
+        InvoiceService.printInvoice(order);
+        String consoleOutput = outContent.toString();
+        String[] lines = consoleOutput.split("\n");
+        assertTrue(lines[12].startsWith("Bonus points: 2"));
+    }
+
+    @Test
+    public void shouldNotPrintBonusPointsWhenBonusPointsEqualZero() {
+        Order order = createOrder();
+        order.setBonusPoints(0);
+        InvoiceService.printInvoice(order);
+        String consoleOutput = outContent.toString();
+        String[] lines = consoleOutput.split("\n");
+        Arrays.stream(lines).forEach(line -> assertFalse(line.contains("Bonus points:")));
+    }
+
+    @Test
+    public void shouldNotPrintBonusPointsWhenBonusPointsEqualNull() {
+        Order order = createOrder();
+        order.setBonusPoints(null);
+        InvoiceService.printInvoice(order);
+        String consoleOutput = outContent.toString();
+        String[] lines = consoleOutput.split("\n");
+        Arrays.stream(lines).forEach(line -> assertFalse(line.contains("Bonus points:")));
     }
 
     private static String getSeparatorPattern() {

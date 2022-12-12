@@ -47,9 +47,20 @@ java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, la
 
 1. Any beverage can be collected for free when product name is prefixed with 'bonus' string
 ```
-java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, bonus large coffee with special roast, bacon roll  
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, bonus large coffee with special roast  
 ```
-
+2. When ordering drink and snack, extra ingredient (if any) in drink, is for free
+```
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, bacon roll  
+```
+3. When ordering drinks, every 5th drink is free
+```
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee  
+```
+4. When ordering drinks, drinks not used for bonus are exchanged to bonus points
+```
+java -jar target/coffee-corner-1.0-SNAPSHOT.jar small coffee with extra milk, small coffee, small coffee, small coffee, small coffee, orange juice, small coffee
+```
 
 
 

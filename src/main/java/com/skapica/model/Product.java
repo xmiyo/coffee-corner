@@ -18,6 +18,10 @@ public class Product {
         this.price = price;
     }
 
+    public Product getExtra() {
+        return extra;
+    }
+
     public String getName() {
         if (extra != null)
             name = String.format("%s %s %s", name, PRODUCTS_JOIN_STRING, extra.getName());
@@ -37,6 +41,10 @@ public class Product {
             return price.add(extra.getPrice());
         else
             return price;
+    }
+
+    public boolean isBonusProduct() {
+        return isBonusProduct;
     }
 
     public void setBonusProduct(boolean bonusProduct) {

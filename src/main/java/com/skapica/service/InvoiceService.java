@@ -45,13 +45,16 @@ public class InvoiceService {
             System.out.println("-----------------------------------------------------------------");
 
             //print bonus points
-            //System.out.println("Bonus points: implement me");
+            Integer bonusPoints = order.getBonusPoints();
+            if (bonusPoints != null && bonusPoints > 0)
+                System.out.println("Bonus points: " + order.getBonusPoints());
         }
     }
 
     /**
      * Returns next invoice number for given calendar year
      * Currently number is fixed
+     *
      * @return formatted invoice number
      */
     private static String getInvoiceNumber() {
